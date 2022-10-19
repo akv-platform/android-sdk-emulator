@@ -15,4 +15,9 @@ jobs:
     steps:
       - name: find tools
         run: |
+          echo "==== SDK ===="
           ls -la ${ANDROID_SDK_ROOT}
+          echo "==== build-tools ===="
+          ls -la ${ANDROID_SDK_ROOT}/build-tools
+          echo "==== build-tools ===="
+          ls -la ${ANDROID_SDK_ROOT}/cmdline-tools
