@@ -37,8 +37,8 @@ jobs:
         run: |   
           ls -la ${ANDROID_SDK_ROOT}/emulator/emulator
           ${ANDROID_SDK_ROOT}/emulator/emulator -version
-          ${ANDROID_SDK_ROOT}/emulator/emulator-check accel
-          ${ANDROID_SDK_ROOT}/emulator/emulator-check cpu-info
+          ${ANDROID_SDK_ROOT}/emulator/emulator-check accel || true
+          ${ANDROID_SDK_ROOT}/emulator/emulator-check cpu-info || true
           
           
 
@@ -46,5 +46,5 @@ jobs:
         run: |   
           ls -la ${ANDROID_SDK_ROOT}/tools/emulator
           ${ANDROID_SDK_ROOT}/tools/emulator -version
-          ${ANDROID_SDK_ROOT}/tools/emulator-check accel
-          ${ANDROID_SDK_ROOT}/tools/emulator-check cpu-info
+          ${ANDROID_SDK_ROOT}/tools/emulator-check accel || true
+          ${ANDROID_SDK_ROOT}/tools/emulator-check cpu-info || true
