@@ -15,5 +15,4 @@ jobs:
     steps:
       - name: find tools
         run: |
-          set
-          ls -l ~/Library/sdk
+          ls -la ${ANDROID_SDK_ROOT}
