@@ -13,7 +13,7 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - name: find tools
+      - name: compare build-tools & cmdline-tools
         run: |
           echo "==== SDK ===="
           ls -la ${ANDROID_SDK_ROOT}
@@ -22,21 +22,23 @@ jobs:
           echo "==== build-tools ===="
           ls -la ${ANDROID_SDK_ROOT}/cmdline-tools
           
-          echo "==== sdkmanager versions ===="
-          echo "sdk/tools/bin/sdkmanager"
+      - name: sdk/tools/bin/sdkmanager
+        run: |   
           ls -la ${ANDROID_SDK_ROOT}/tools/bin/sdkmanager
           ${ANDROID_SDK_ROOT}/tools/bin/sdkmanager --version
+          
+      - name: sdk/cmdline-tools/latest/bin/sdkmanager
+        run: |          
           echo "sdk/cmdline-tools/latest/bin/sdkmanager"
           ls -la ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager
           ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --version
-          
-          echo "==== emulator versions ===="
-          echo "sdk/emulator"
-          ls -la ${ANDROID_SDK_ROOT}/emulator
-          ${ANDROID_SDK_ROOT}/emulator -version
-          echo "sdk/emulator/emulator"
+   
+      - name: sdk/emulator/emulator
+        run: |   
           ls -la ${ANDROID_SDK_ROOT}/emulator/emulator
           ${ANDROID_SDK_ROOT}/emulator/emulator -version
-          echo "sdk/emulator/emulator"
+
+      - name: sdk/tools/emulator
+        run: |   
           ls -la ${ANDROID_SDK_ROOT}/tools/emulator
           ${ANDROID_SDK_ROOT}/tools/emulator -version
