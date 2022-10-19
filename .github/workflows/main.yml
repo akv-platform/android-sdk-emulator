@@ -21,3 +21,8 @@ jobs:
           ls -la ${ANDROID_SDK_ROOT}/build-tools
           echo "==== build-tools ===="
           ls -la ${ANDROID_SDK_ROOT}/cmdline-tools
+          echo "==== find sdkmanager ===="
+          find ${ANDROID_SDK_ROOT} -name sdkmanager
+          echo "==== find emulator ===="
+          find ${ANDROID_SDK_ROOT} -name 'emulator*'
+
