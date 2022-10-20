@@ -76,7 +76,7 @@ jobs:
           echo 'HVF = on' >> ~/.android/advancedFeatures.ini
           cat ~/.android/advancedFeatures.ini
           
-      - name: Start Android emulator gpu no
+      - name: Start Android emulator
         env:
           TOOLS: ${{ matrix.tools }}
           IMAGE: ${{ matrix.image }}
@@ -86,19 +86,23 @@ jobs:
         run: |
           echo "Starting emulator and waiting for boot to complete...."
           nohup $ANDROID_HOME/$EMULATOR -gpu $GPU -avd $DEVICE -no-snapshot -no-audio -no-boot-anim -camera-back none -camera-front none -qemu -m 2048 2>&1 &
+          
+      - name: Wait Android emulator
+        run: |
           $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do echo "wait..."; sleep 1; done; input keyevent 82'
           echo "Emulator has finished booting"
           $ANDROID_HOME/platform-tools/adb devices
           sleep 45
-          screencapture screenshot-gpu-no.jpg
-          $ANDROID_HOME/platform-tools/adb exec-out screencap -p > emulator-gpu-no.png
+          screencapture screenshot.jpg
+          $ANDROID_HOME/platform-tools/adb exec-out screencap -p > emulator.png
+          
           
       - uses: actions/upload-artifact@v3
         with:
-          name: screenshot-gpu-no.jpg
-          path: screenshot-gpu-no.jpg
+          name: screenshot.jpg
+          path: screenshot.jpg
           
       - uses: actions/upload-artifact@v3
         with:
-          name: emulator-gpu-host.png
-          path: emulator-gpu-host.png
+          name: emulator.png
+          path: emulator.png
