@@ -22,7 +22,8 @@ jobs:
         tools: [cmdline-tools/latest]
         emulator: [emulator/emulator, tools/emulator]
         # gpu: [host, guest], 'host' takes forever 
-        gpu: [guest, swiftshader_indirect]
+        # gpu: [guest, swiftshader_indirect] guest fallbacks to swiftshader_indirect
+        gpu: [swiftshader_indirect]
         device: [Pixel_2_API_33]
   
     steps: 
