@@ -40,6 +40,7 @@ jobs:
           echo "image: $IMAGE"
           echo "DEVICE: $DEVICE"
           echo "-gpu: $GPU"
+          ls -la
           
       - name: Cache images
         id: system-images
@@ -112,7 +113,14 @@ jobs:
           $ANDROID_HOME/$EMULATOR-check cpu-info || true
           # non nessary if HAXM is not installed
           sysctl kern.hv_support
-          echo 'HVF = on' >> ~/.android/advancedFeatures.ini
+          echo 'HVF = on' > ~/.android/advancedFeatures.ini
+          # does it make sense?
+          echo 'HYPERV = off' > ~/.android/advancedFeatures.ini
+          echo 'KVM = off' > ~/.android/advancedFeatures.ini
+          echo 'HAXM = off' > ~/.android/advancedFeatures.ini
+          echo 'Vulkan = off' > ~/.android/advancedFeatures.ini
+          echo 'GLDirectMem = on' > ~/.android/advancedFeatures.ini
+          
           cat ~/.android/advancedFeatures.ini
           
       - name: Start Android emulator
@@ -132,6 +140,7 @@ jobs:
           
       - name: Run Espresso tests
         run: |
+          ls -la
           cd HelloWorldEspresso
           ./gradlew connectedAndroidTest
 
