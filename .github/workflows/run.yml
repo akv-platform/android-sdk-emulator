@@ -123,7 +123,7 @@ jobs:
           GPU: ${{ matrix.gpu }}
         run: |
           echo "Starting emulator"
-          nohup $ANDROID_HOME/$EMULATOR -gpu $GPU -avd $DEVICE -prop -perf-stat -no-snapshot -no-audio -no-boot-anim -camera-back none -camera-front none -cores 2 -qemu -m 2048 2>&1 &
+          nohup $ANDROID_HOME/$EMULATOR -gpu $GPU -avd $DEVICE -perf-stat -no-snapshot -no-audio -no-boot-anim -camera-back none -camera-front none -cores 2 -qemu -m 2048 2>&1 &
           echo "Waiting for boot to complete..."
           $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do echo "wait..."; sleep 1; done; input keyevent 82'
           echo "Emulator has finished booting"
