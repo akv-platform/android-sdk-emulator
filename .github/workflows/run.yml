@@ -23,7 +23,20 @@ jobs:
         device: [Pixel_2_API_33]
   
     steps: 
-    
+      - name: Cache download
+        id: cache-downloads
+        uses: actions/cache@v3
+        with:
+          path:  /Users/runner/Library/Android/sdk/.downloadIntermediates
+          key: cache-downloads
+          
+      - name: Cache temp
+        id: cache-temp
+        uses: actions/cache@v3
+        with:
+          path:  /Users/runner/Library/Android/sdk/.temp
+          key: cache-temp          
+        
       - name: sdkmanager --list
         env:
           TOOLS: ${{ matrix.tools }}
