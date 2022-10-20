@@ -41,8 +41,7 @@ jobs:
           echo "image: $IMAGE"
           echo "DEVICE: $DEVICE"
           echo "-gpu: $GPU"
-          
-      - uses: actions/checkout@v3
+
           
       - name: Cache images
         id: system-images
@@ -141,6 +140,8 @@ jobs:
           echo "Emulator has finished booting"
           $ANDROID_HOME/platform-tools/adb devices
           
+      - uses: actions/checkout@v3
+      
       - name: Run Espresso tests
         run: |
           ls -la
