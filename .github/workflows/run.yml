@@ -17,9 +17,12 @@ jobs:
     strategy:
       matrix: 
         image: [system-images;android-33;google_apis_playstore;x86_64]
-        tools: [cmdline-tools/latest, tools]
+        # tools: [cmdline-tools/latest, tools], 'tools' obsolete and issue annoying messages
+        # see https://developer.android.com/studio/releases/sdk-tools
+        tools: [cmdline-tools/latest]
         emulator: [emulator/emulator, tools/emulator]
-        gpu: [host, guest]
+        # gpu: [host, guest], 'host' takes forever 
+        gpu: [guest]
         device: [Pixel_2_API_33]
   
     steps: 
@@ -42,7 +45,14 @@ jobs:
         uses: actions/cache@v3
         with:
           path:  /Users/runner/Library/Android/sdk/system-images
-          key: system-images       
+          key: system-images     
+          
+      - name: Cache emulator
+        id: emulator
+        uses: actions/cache@v3
+        with:
+          path:  /Users/runner/Library/Android/sdk/emulator
+          key: system-emulator
         
       - name: sdkmanager --list
         env:
@@ -76,8 +86,24 @@ jobs:
           echo "no" | $ANDROID_HOME/$TOOLS/bin/avdmanager create avd -n $DEVICE -d pixel --package $IMAGE --force
           $ANDROID_HOME/$EMULATOR -list-avds
           
-      - name: Set up virtualization
+      - name: update emulator
+        env:
+          EMULATOR: ${{ matrix.emulator }}
+          TOOLS: ${{ matrix.tools }}
         run: |
+          echo "current version"
+          $ANDROID_HOME/$EMULATOR -version
+          echo "y" | $ANDROID_HOME/$TOOLS/bin/sdkmanager --install emulator
+          echo "updated version"
+          
+      - name: Set up virtualization
+        env:
+          EMULATOR: ${{ matrix.emulator }}
+        run: |
+          echo "$ANDROID_HOME/$EMULATOR-check accel"
+          $ANDROID_HOME/$EMULATOR-check accel
+          echo "$ANDROID_HOME/$EMULATOR-check cpu-info"
+          $ANDROID_HOME/$EMULATOR-check cpu-info
           # non nessary if HAXM is not installed
           sysctl kern.hv_support
           echo 'HVF = on' >> ~/.android/advancedFeatures.ini
@@ -92,11 +118,12 @@ jobs:
           GPU: ${{ matrix.gpu }}
         run: |
           echo "Starting emulator"
-          nohup $ANDROID_HOME/$EMULATOR -gpu $GPU -avd $DEVICE -no-snapshot -no-audio -no-boot-anim -camera-back none -camera-front none -qemu -m 2048 2>&1 &
+          nohup $ANDROID_HOME/$EMULATOR -gpu $GPU -avd $DEVICE -prop -perf-stat -no-snapshot -no-audio -no-boot-anim -camera-back none -camera-front none -cores 2 -qemu -m 2048 2>&1 &
           echo "Waiting for boot to complete..."
           $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do echo "wait..."; sleep 1; done; input keyevent 82'
           echo "Emulator has finished booting"
           $ANDROID_HOME/platform-tools/adb devices
+          
       - name: Make screenshots
         run: |
           sleep 45
