@@ -14,13 +14,13 @@ on:
 jobs:
   run:
     runs-on: macos-11
-      strategy:
-        matrix: 
-          image: [system-images;android-33;google_apis_playstore;x86_64]
-          tools: [cmdline-tools/latest, tools]
-          emulator: [emulator/emulator, tools/emulator]
-          gpu: [host, guest]
-          device: [Pixel_2_API_33]
+    strategy:
+      matrix: 
+        image: [system-images;android-33;google_apis_playstore;x86_64]
+        tools: [cmdline-tools/latest, tools]
+        emulator: [emulator/emulator, tools/emulator]
+        gpu: [host, guest]
+        device: [Pixel_2_API_33]
   
     steps: 
     
