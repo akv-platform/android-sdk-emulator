@@ -97,15 +97,16 @@ jobs:
           $ANDROID_HOME/$EMULATOR -version
           echo "y" | $ANDROID_HOME/$TOOLS/bin/sdkmanager --install emulator
           echo "updated version"
+          $ANDROID_HOME/$EMULATOR -version
           
       - name: Set up virtualization
         env:
           EMULATOR: ${{ matrix.emulator }}
         run: |
           echo "$ANDROID_HOME/$EMULATOR-check accel"
-          $ANDROID_HOME/$EMULATOR-check accel
+          $ANDROID_HOME/$EMULATOR-check accel || true
           echo "$ANDROID_HOME/$EMULATOR-check cpu-info"
-          $ANDROID_HOME/$EMULATOR-check cpu-info
+          $ANDROID_HOME/$EMULATOR-check cpu-info || true
           # non nessary if HAXM is not installed
           sysctl kern.hv_support
           echo 'HVF = on' >> ~/.android/advancedFeatures.ini
