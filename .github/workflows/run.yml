@@ -43,6 +43,8 @@ jobs:
       - name: Cache images
         id: system-images
         uses: actions/cache@v3
+        # the same ~40 secs + checks update as "Download image"
+        if: ${{ false }}
         with:
           path:  /Users/runner/Library/Android/sdk/system-images
           key: system-images     
