@@ -12,43 +12,67 @@ on:
   workflow_dispatch:
 
 jobs:
-  run-emulator:
+  run:
     runs-on: macos-11
+      strategy:
+        matrix: 
+          image: [system-images;android-33;google_apis_playstore;x86_64]
+          tools: [cmdline-tools/latest, tools]
+          emulator: [emulator/emulator, tools/emulator]
+          gpu: [host, guest]
+          device: [Pixel_2_API_33]
   
     steps: 
-
-      - name: sdkmanager --list 
+    
+      - name: sdkmanager --list
+        env:
+          TOOLS: ${{ matrix.tools }}
         run: |
           set -x
-          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --list 
+          $ANDROID_HOME/$TOOLS/bin/sdkmanager --list 
           
       - name: Download image
+        env:
+          TOOLS: ${{ matrix.tools }}
+          IMAGE: ${{ matrix.image }}
         run: |
           set -x
-          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install 'system-images;android-33;google_apis_playstore;x86_64'
+          echo "y" | $ANDROID_HOME/$TOOLS/bin/sdkmanager --install $IMAGE
           
       - name: Apply licenses
+        env:
+          TOOLS: ${{ matrix.tools }}
         run: |
           set -x
-          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+          echo "y" | $ANDROID_HOME/$TOOLS/bin/sdkmanager --licenses
           
       - name: Create Android emulator
+        env:
+          TOOLS: ${{ matrix.tools }}
+          IMAGE: ${{ matrix.image }}
+          DEVICE: ${{ matrix.device }}
+          EMULATOR: ${{ matrix.emulator }}
         run: |
-          echo "no" | $ANDROID_HOME/tools/bin/avdmanager create avd -n Pixel_2_API_33 -d pixel --package 'system-images;android-33;google_apis_playstore;x86_64' --force
-          $ANDROID_HOME/emulator/emulator -list-avds
+          echo "no" | $ANDROID_HOME/$TOOLS/bin/avdmanager create avd -n $DEVICE -d pixel --package $IMAGE --force
+          $ANDROID_HOME/$EMULATOR -list-avds
           
       - name: Set up virtualization
         run: |
-          # brew install intel-haxm
+          # non nessary if HAXM is not installed
           sysctl kern.hv_support
           echo 'HVF = on' >> ~/.android/advancedFeatures.ini
           cat ~/.android/advancedFeatures.ini
           
       - name: Start Android emulator gpu no
+        env:
+          TOOLS: ${{ matrix.tools }}
+          IMAGE: ${{ matrix.image }}
+          DEVICE: ${{ matrix.device }}
+          EMULATOR: ${{ matrix.emulator }}
+          GPU: ${{ matrix.gpu }}
         run: |
           echo "Starting emulator and waiting for boot to complete...."
-          ls -la $ANDROID_HOME/emulator
-          nohup $ANDROID_HOME/tools/emulator -avd Pixel_2_API_33 -no-audio -no-boot-anim -camera-back none -camera-front none -qemu -m 2048 2>&1 &
+          nohup $ANDROID_HOME/$EMULATOR -gpu $GPU -avd $DEVICE -no-snapshot -no-audio -no-boot-anim -camera-back none -camera-front none -qemu -m 2048 2>&1 &
           $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed | tr -d '\r') ]]; do echo "wait..."; sleep 1; done; input keyevent 82'
           echo "Emulator has finished booting"
           $ANDROID_HOME/platform-tools/adb devices
