@@ -23,6 +23,20 @@ jobs:
         device: [Pixel_2_API_33]
   
     steps: 
+      - name: Matrix
+        env:
+          TOOLS: ${{ matrix.tools }}
+          IMAGE: ${{ matrix.image }}
+          DEVICE: ${{ matrix.device }}
+          EMULATOR: ${{ matrix.emulator }}
+          GPU: ${{ matrix.gpu }}
+        run: |
+          echo "tools: $ANDROID_HOME/$TOOLS"
+          echo "emulator: $EMULATOR"
+          echo "image: $IMAGE"
+          echo "DEVICE: $DEVICE"
+          echo "-gpu: $GPU"
+          
       - name: Cache download
         id: cache-downloads
         uses: actions/cache@v3
