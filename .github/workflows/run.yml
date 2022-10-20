@@ -130,9 +130,14 @@ jobs:
           echo "Emulator has finished booting"
           $ANDROID_HOME/platform-tools/adb devices
           
+      - name: Run Espresso tests
+        run: |
+          cd HelloWorldEspresso
+          ./gradlew connectedAndroidTest
+
       - name: Make screenshots
         run: |
-          sleep 45
+          sleep 5
           screencapture screenshot.jpg
           $ANDROID_HOME/platform-tools/adb exec-out screencap -p > emulator.png
           
