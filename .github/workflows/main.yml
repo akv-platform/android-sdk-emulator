@@ -9,8 +9,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  investigate:
     runs-on: macos-latest
+    if: ${{ false }}
 
     steps:
       - name: compare build-tools & cmdline-tools
