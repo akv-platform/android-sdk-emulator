@@ -41,6 +41,7 @@ jobs:
           echo "image: $IMAGE"
           echo "DEVICE: $DEVICE"
           echo "-gpu: $GPU"
+          pwd
           ls -la
           
       - name: Cache images
